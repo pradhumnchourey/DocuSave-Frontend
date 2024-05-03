@@ -155,7 +155,7 @@ const SignUpScreen = ({ navigation }) => {
   };
 
   return (
-    <View className="bg-white h-full w-full">
+    <View className="bg-sky-100 h-full w-full">
       <StatusBar style="light" />
       {/**background img */}
       <Image
@@ -206,6 +206,7 @@ const SignUpScreen = ({ navigation }) => {
               value={user.phoneNumber}
               onChangeText={(text) => handleInputChange("phoneNumber", text)}
               keyboardType="phone-pad"
+              maxLength={10}
             />
           </Animated.View>
           <Animated.View

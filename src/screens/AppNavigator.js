@@ -22,10 +22,7 @@ const AppNavigator = () => {
         <Stack.Screen name="AuthLoading" component={AuthLoadingScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
-        <Stack.Screen
-          name="Home"
-          component={HomeCategoryScreen}
-        />
+        <Stack.Screen name="Home" component={HomeCategoryScreen} />
         <Stack.Screen
           name="DocumentList"
           component={DocumentListScreen}
@@ -33,8 +30,9 @@ const AppNavigator = () => {
             headerShown: true,
             title: "All Categories",
             headerStyle: {
-              backgroundColor: "rgb(56 189 248)",
+              backgroundColor: "rgb(219 234 254)",
               borderBottomWidth: 1,
+              borderBottomColor: "rgb(23 37 84)",
             },
           }}
         />

@@ -1,5 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import Navbar from "../components/Navbar";
 
@@ -21,6 +20,16 @@ const items = [
   },
   {
     id: 4,
+    type: "Legal Docs",
+    image: require("../../assets/Images/4.png"),
+  },
+  {
+    id: 5,
+    type: "Education Docs",
+    image: require("../../assets/Images/3.png"),
+  },
+  {
+    id: 6,
     type: "Legal Docs",
     image: require("../../assets/Images/4.png"),
   },
@@ -46,7 +55,7 @@ const HomeCategoryScreen = ({ navigation }) => {
   };
   return (
     <View className="flex-1 ">
-      <Navbar navigation={navigation}/>
+      <Navbar navigation={navigation} />
       <View className="justify-center items-center bg-blue-200 rounded-xl mx-4 mb-4">
         <Image
           source={require("../../assets/Images/banner.png")}
@@ -61,15 +70,13 @@ const HomeCategoryScreen = ({ navigation }) => {
             <Text>Add Category</Text>
           </TouchableOpacity>
         </View>
-        <View>
+        <ScrollView horizontal={true}>
+          {/* <View> */}
           <FlatList
+            horizontal={true}
             data={items}
-            numColumns={2}
             showsVerticalScrollIndicator={false}
             keyExtractor={(item) => item.id}
-            columnWrapperStyle={{
-              justifyContent: "space-evenly",
-            }}
             className="mx-2"
             renderItem={({ item }) => {
               return (
@@ -87,7 +94,8 @@ const HomeCategoryScreen = ({ navigation }) => {
               );
             }}
           />
-        </View>
+          {/* </View> */}
+        </ScrollView>
       </View>
     </View>
   );
