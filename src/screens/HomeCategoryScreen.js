@@ -1,4 +1,5 @@
-import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useState } from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import Navbar from "../components/Navbar";
 
@@ -20,16 +21,6 @@ const items = [
   },
   {
     id: 4,
-    type: "Legal Docs",
-    image: require("../../assets/Images/4.png"),
-  },
-  {
-    id: 5,
-    type: "Education Docs",
-    image: require("../../assets/Images/3.png"),
-  },
-  {
-    id: 6,
     type: "Legal Docs",
     image: require("../../assets/Images/4.png"),
   },
@@ -70,7 +61,7 @@ const HomeCategoryScreen = ({ navigation }) => {
             <Text>Add Category</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView horizontal={true}>
+        {/* <ScrollView horizontal={true}> */}
           {/* <View> */}
           <FlatList
             horizontal={true}
@@ -95,7 +86,7 @@ const HomeCategoryScreen = ({ navigation }) => {
             }}
           />
           {/* </View> */}
-        </ScrollView>
+        {/* </ScrollView> */}
       </View>
     </View>
   );
