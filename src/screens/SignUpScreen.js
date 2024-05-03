@@ -1,17 +1,16 @@
 // screens/SignUpScreen.js
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  StatusBar,
-  Image,
-  TextInput,
   Alert,
+  Image,
+  StatusBar,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
-import { signUp } from "../utils/api";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
+import { signUp } from "../utils/api";
 
 const SignUpScreen = ({ navigation }) => {
   const [user, setUser] = useState({
@@ -23,17 +22,89 @@ const SignUpScreen = ({ navigation }) => {
   });
   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
 
+  const [fieldErrors, setFieldErrors] = useState({
+    name: false,
+    phoneNumber: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+  });
+
   const handleInputChange = (fieldName, value) => {
     setUser({ ...user, [fieldName]: value });
     checkAllFieldsFilled();
+    switch (fieldName) {
+      case "email":
+        setFieldErrors({ ...fieldErrors, email: !validateEmail(value) });
+        break;
+      case "password":
+        setFieldErrors({ ...fieldErrors, password: !validatePassword(value)});
+        break;
+      case "confirmPassword":
+        setFieldErrors({ ...fieldErrors, confirmPassword: value !== user.password });
+        break;
+      case "phoneNumber":
+        setFieldErrors({ ...fieldErrors, phoneNumber: !validatePhoneNumber(value) });
+        break;
+      default:
+        break;
+    }
   };
   const checkAllFieldsFilled = () => {
     const filled = Object.values(user).every((value) => value !== "");
     setAllFieldsFilled(filled);
   };
 
+  useEffect(() => {
+    checkAllFieldsFilled();
+  }, [user]);
+
+
   const handleSignUp = async () => {
+    if (!allFieldsFilled) {
+      Alert.alert("Missing Information", "Please fill in all fields.");
+      return;
+    }
+
+    if (!validateEmail(user.email)) {
+      setFieldErrors({ ...fieldErrors, email: true });
+      Alert.alert("Invalid Email", "Please enter a valid email address.");
+      return;
+    } else {
+      setFieldErrors({ ...fieldErrors, email: false });
+    }
+
+    // Validate password length
+    if (!validatePassword(user.password)) {
+      setFieldErrors({ ...fieldErrors, password: true });
+      if(user.password.length < 6)
+        Alert.alert("Password Too Short!");
+      else
+        Alert.alert("Password must contain a lowercase letter, an uppercase letter, a symbol and a digit.");
+      return;
+    } else {
+      setFieldErrors({ ...fieldErrors, password: false });
+    }
+
+    // Validate password match
+    if (user.password !== user.confirmPassword) {
+      setFieldErrors({ ...fieldErrors, confirmPassword: true });
+      Alert.alert("Passwords Don't Match", "Please make sure your passwords match.");
+      return;
+    } else {
+      setFieldErrors({ ...fieldErrors, confirmPassword: false });
+    }
+
+    // Validate phone number length
+    if (!validatePhoneNumber(user.phoneNumber)) {
+      setFieldErrors({ ...fieldErrors, phoneNumber: true });
+      Alert.alert("Invalid Phone Number", "Phone number must contain at least 10 digits.");
+      return;
+    } else {
+      setFieldErrors({ ...fieldErrors, phoneNumber: false });
+    }
     console.log(user);
+    
     try {
       await signUp(user);
       // Reset all fields after successful signup
@@ -60,10 +131,29 @@ const SignUpScreen = ({ navigation }) => {
       });
     }
   };
+  const validateEmail = (email) => {
+    // Regular expression for email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhoneNumber = (phoneNumber) => {
+    // Regular expression for phone number validation
+    const phoneRegex = /^[6-9][0-9]{9}$/;
+    return phoneRegex.test(phoneNumber);
+  };
+
+  const validatePassword = (password) => {
+    // Regular expression for password validation
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{6,})/;
+    return passwordRegex.test(password);
+  };
+
 
   const navigateToLogin = () => {
     navigation.navigate("Login");
   };
+
   return (
     <View className="bg-white h-full w-full">
       <StatusBar style="light" />
@@ -108,7 +198,7 @@ const SignUpScreen = ({ navigation }) => {
           </Animated.View>
           <Animated.View
             entering={FadeInDown.delay(300).duration(1000).springify()}
-            className="bg-black/5 p-3 rounded-2xl w-full "
+            className={`bg-black/5 p-3 rounded-2xl w-full ${fieldErrors.phoneNumber ? "border border-red-500" : ""}`}
           >
             <TextInput
               className="text-lg"
@@ -120,7 +210,8 @@ const SignUpScreen = ({ navigation }) => {
           </Animated.View>
           <Animated.View
             entering={FadeInDown.delay(400).duration(1000).springify()}
-            className="bg-black/5 p-3 rounded-2xl w-full"
+            className={`bg-black/5 p-3 rounded-2xl w-full ${fieldErrors.email ? "border border-red-500" : ""}`}
+            // "bg-black/5 p-3 rounded-2xl w-full "
           >
             <TextInput
               className="text-lg"
@@ -133,7 +224,7 @@ const SignUpScreen = ({ navigation }) => {
           </Animated.View>
           <Animated.View
             entering={FadeInDown.delay(400).duration(1000).springify()}
-            className="bg-black/5 p-3 rounded-2xl w-full"
+            className={`bg-black/5 p-3 rounded-2xl w-full ${fieldErrors.password ? "border border-red-500" : ""}`}            
           >
             <TextInput
               className="text-lg"
@@ -145,7 +236,7 @@ const SignUpScreen = ({ navigation }) => {
           </Animated.View>
           <Animated.View
             entering={FadeInDown.delay(400).duration(1000).springify()}
-            className="bg-black/5 p-3 rounded-2xl w-full mb-4"
+            className={`bg-black/5 p-3 rounded-2xl w-full ${fieldErrors.confirmPassword ? "border border-red-500" : ""}`}            
           >
             <TextInput
               className="text-lg"

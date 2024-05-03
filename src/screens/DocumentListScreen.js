@@ -14,7 +14,8 @@ import ListOptions from "../components/ListOptions";
 import SearchDocument from "../components/SearchDocument";
 import { getDocumentList } from "../utils/api";
 
-const DocumentListScreen = ({ navigation }) => {
+const DocumentListScreen = ({ navigation, route }) => {
+  const {category}=route.params;
   const [documentList, setDocumentList] = useState([]);
   const [filteredDocumentList, setFilteredDocumentList] = useState([]);
   const [isListEmpty, setIsListEmpty] = useState(true);
@@ -99,7 +100,7 @@ const DocumentListScreen = ({ navigation }) => {
       /> */}
       <View className="p-7  flex-row bg-sky-400 justify-center">
         <Text className=" font-bold text-3xl shadow-sm ">
-          Identity documents
+          {category}
         </Text>
       </View>
 

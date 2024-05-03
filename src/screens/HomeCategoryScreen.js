@@ -1,4 +1,5 @@
-import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useState } from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import Navbar from "../components/Navbar";
 
@@ -24,8 +25,25 @@ const items = [
     image: require("../../assets/Images/4.png"),
   },
 ];
-
 const HomeCategoryScreen = ({ navigation }) => {
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    fetchUserName();
+  }, []);
+
+  const fetchUserName = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem("user");
+      if (storedData !== null) {
+        const dataObj = JSON.parse(storedData);
+        const userName = dataObj.userName;
+        setUserName(userName);
+      }
+    } catch (error) {
+      console.log("Error fetching data:", error);
+    }
+  };
   return (
     <View className="flex-1 ">
       <Navbar navigation={navigation}/>
@@ -34,6 +52,7 @@ const HomeCategoryScreen = ({ navigation }) => {
           source={require("../../assets/Images/banner.png")}
           className="w-80 h-80"
         />
+        <Text className="font-bold text-2xl shadow-sm">Welcome {userName}!</Text>
       </View>
       <View className="px-4 space-y-5">
         <View className="flex-row justify-between items-center">
@@ -57,7 +76,7 @@ const HomeCategoryScreen = ({ navigation }) => {
                 <TouchableOpacity
                   className="bg-blue-100 p-3 rounded-2xl mb-3 mx-2 "
                   onPress={() => {
-                    navigation.navigate("DocumentList", {});
+                    navigation.navigate("DocumentList", {category: item.type});
                   }}
                 >
                   <View>

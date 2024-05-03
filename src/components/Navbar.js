@@ -18,7 +18,7 @@ const Navbar = ({ navigation }) => {
   };
 
   return (
-    <View className="flex-row items-center justify-between p-4 mt-10">
+    <View className="flex-row items-center justify-between p-4">
       <Text className="font-bold text-3xl shadow-sm">DocuSave</Text>
       <TouchableOpacity
         onPress={handleLogout}
