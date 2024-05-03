@@ -7,7 +7,7 @@ import {
   StatusBar,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import HomeIcons from "../components/HomeIcons";
 import ListOptions from "../components/ListOptions";
@@ -50,9 +50,9 @@ const DocumentListScreen = ({ navigation }) => {
     console.log("index: ", expandedItems[index]);
   };
 
-  const closeDropdowns = () => {
-    setExpandedItems(new Array(expandedItems.length).fill(false));
-  };
+  // const closeDropdowns = () => {
+  //   setExpandedItems(new Array(expandedItems.length).fill(false));
+  // };
 
   const fetchDocumentList = async () => {
     try {
@@ -83,8 +83,7 @@ const DocumentListScreen = ({ navigation }) => {
     );
     if (filteredDocuments.length !== 0) {
       setFilteredDocumentList(filteredDocuments);
-    }
-    else{
+    } else {
       setIsListEmpty(false);
     }
     handleToggleSearch();
@@ -93,53 +92,57 @@ const DocumentListScreen = ({ navigation }) => {
   return (
     <View className="flex-1">
       <StatusBar style="light" />
-      {/* <Image
-        className="h-full w-full absolute"
-        source={require("../../assets/Images/bg-doc.jpg")}
-      /> */}
-      <View className="p-7  flex-row bg-sky-400 justify-center">
+      <View className="p-7  flex-row bg-blue-100 justify-center">
         <Text className=" font-bold text-3xl shadow-sm ">
           Identity documents
         </Text>
       </View>
 
       {isSearchOpen && <SearchDocument onSearch={handleSearch} />}
-      {!(isListEmpty) && <View className="flex-1 justify-center items-center p-5 mt-5 "> 
-      <Text className="text-2xl font-bold text-sky-950">Oops! No Documents Found.</Text>
-      </View>}
+      {!isListEmpty && (
+        <View className="flex-1 justify-center items-center p-5 mt-5 ">
+          <Text className="text-2xl font-bold text-sky-950">
+            Oops! No Documents Found.
+          </Text>
+        </View>
+      )}
       {/**list of docs */}
-      {(isListEmpty) &&  
-      <View className="flex-1 p-5 mt-5 ">
-        <FlatList
-          data={filteredDocumentList}
-          keyExtractor={(item) => item.docId.toString()}
-          renderItem={({ item, index }) => (
-            <View className="mb-4 border-b-2 border-slate-400">
-              <TouchableOpacity onPress={() => toggleExpanded(index)}>
-                <View className="flex flex-row justify-between items-center h-14 ">
-                  <Text className="text-lg font-bold text-sky-950">
-                    {item.docName}
-                  </Text>
-                  {/* <Text className="text-base">{item.docType}</Text> */}
-                  <MaterialIcons
-                    name={
-                      expandedItems[index]
-                        ? "keyboard-arrow-up"
-                        : "keyboard-arrow-down"
-                    }
-                    size={30}
-                    color="rgb(8 47 73)"
+      {isListEmpty && (
+        <View className="flex-1 p-5 mt-5 ">
+          <FlatList
+            data={filteredDocumentList}
+            keyExtractor={(item) => item.docId.toString()}
+            renderItem={({ item, index }) => (
+              <View className="mb-4 border-b-2 border-slate-400">
+                <TouchableOpacity onPress={() => toggleExpanded(index)}>
+                  <View className="flex flex-row justify-between items-center h-14 ">
+                    <Text className="text-lg font-bold text-sky-950">
+                      {item.docName}
+                    </Text>
+                    {/* <Text className="text-base">{item.docType}</Text> */}
+                    <MaterialIcons
+                      name={
+                        expandedItems[index]
+                          ? "keyboard-arrow-up"
+                          : "keyboard-arrow-down"
+                      }
+                      size={30}
+                      color="rgb(8 47 73)"
+                    />
+                  </View>
+                </TouchableOpacity>
+                {expandedItems[index] && (
+                  <ListOptions
+                    docId={item.docId}
+                    uri={item.docUri.toString()}
+                    refreshPage={refreshPage}
                   />
-                </View>
-              </TouchableOpacity>
-              {expandedItems[index] && (
-                <ListOptions docId={item.docId} uri={item.docUri.toString()} refreshPage={refreshPage}/>
-              )}
-            </View>
-          )}
-        />
-      </View>
-      }
+                )}
+              </View>
+            )}
+          />
+        </View>
+      )}
       <HomeIcons
         handleToggleSearch={handleToggleSearch}
         navigation={navigation}

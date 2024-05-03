@@ -9,13 +9,13 @@ const HomeIcons = ({ handleToggleSearch, navigation }) => {
         style={styles.icon}
         onPress={() => navigation.navigate("DocumentUpload")}
       >
-        <MaterialIcons name="add" size={26} color="black" />
+        <MaterialIcons name="add" size={26} color="white" />
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.icon}
         onPress={handleToggleSearch} // Toggle search bar
       >
-        <MaterialIcons name="search" size={26} color="black" />
+        <MaterialIcons name="search" size={26} color="white" />
       </TouchableOpacity>
     </View>
   );
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginVertical: 5, // Adjust the vertical distance between icons
-    backgroundColor: "rgb(56 189 248)", // White background color
+    backgroundColor: "rgb(23 37 84)", // White background color
     borderRadius: 50, // Make the border radius half of the width/height to create a circle
     width: 50, // Width of the icon container
     height: 50, // Height of the icon container

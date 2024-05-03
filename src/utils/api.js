@@ -94,4 +94,3 @@ const deleteDocument = async (docId) => {
 };
 
 export { deleteDocument, getDocumentList, login, signUp, uploadDocument };
-

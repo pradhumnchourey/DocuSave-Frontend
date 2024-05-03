@@ -48,7 +48,7 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <View className="bg-white h-full w-full">
+    <View className="bg-sky-100 h-full w-full">
       <StatusBar style="light" />
       {/**background img */}
       <Image
