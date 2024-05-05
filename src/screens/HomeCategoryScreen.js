@@ -52,7 +52,7 @@ const HomeCategoryScreen = ({ navigation }) => {
           source={require("../../assets/Images/banner.png")}
           className="w-80 h-80"
         />
-        <Text className="font-bold text-2xl shadow-sm">Welcome {userName}!</Text>
+        <Text className="font-bold text-2xl shadow-sm mb-5">Welcome {userName}!</Text>
       </View>
       <View className="px-4 space-y-5">
         <View className="flex-row justify-between items-center">

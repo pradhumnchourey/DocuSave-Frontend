@@ -1,13 +1,13 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import React from "react";
 import { MaterialIcons } from "@expo/vector-icons";
+import React from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
-const HomeIcons = ({ handleToggleSearch, navigation }) => {
+const HomeIcons = ({ handleToggleSearch, navigation, category }) => {
   return (
     <View style={styles.iconContainer}>
       <TouchableOpacity
         style={styles.icon}
-        onPress={() => navigation.navigate("DocumentUpload")}
+        onPress={() => navigation.navigate("DocumentUpload", {category: category})}
       >
         <MaterialIcons name="add" size={26} color="white" />
       </TouchableOpacity>

@@ -21,15 +21,21 @@ const DocumentListScreen = ({ navigation, route }) => {
   const [isListEmpty, setIsListEmpty] = useState(true);
   const [expandedItems, setExpandedItems] = useState([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [selectedType, setSelectedType] = useState("all"); // Initialize with a default value
+  const [isAllDocsEnabled, setAllDocsEnabled] = useState(false);
+  const [isPdfEnabled, setPdfEnabled] = useState(false);
+  const [isWordEnabled, setWordEnabled] = useState(false);
+  const [isExcelEnabled, setExcelEnabled] = useState(false);
+  const [isPptEnabled, setPptEnabled] = useState(false);
 
   useEffect(() => {
-    fetchDocumentList();
+    fetchDocumentList(selectedType);
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       handleBackPress
     );
     return () => backHandler.remove();
-  }, []);
+  }, [selectedType]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -55,9 +61,9 @@ const DocumentListScreen = ({ navigation, route }) => {
   //   setExpandedItems(new Array(expandedItems.length).fill(false));
   // };
 
-  const fetchDocumentList = async () => {
+  const fetchDocumentList = async (type) => {
     try {
-      const response = await getDocumentList(); // Make API call to fetch document list
+      const response = await getDocumentList(category, type); // Make API call to fetch document list
       setDocumentList(response); // Store the document list in state
       setFilteredDocumentList(response);
     } catch (error) {
@@ -90,6 +96,70 @@ const DocumentListScreen = ({ navigation, route }) => {
     handleToggleSearch();
   };
 
+  const filterDocuments = (type) => { 
+    const filteredDocuments = documentList.filter((doc) => doc.docType === type);
+    if (filteredDocuments.length !== 0) {
+      setFilteredDocumentList(filteredDocuments);
+    } else {
+      setIsListEmpty(false);
+    }
+    // setFilteredDocumentList(filteredDocuments);
+    // setIsListEmpty(filteredDocuments.length === 0);
+  };
+
+  const toggleEnabledButton = (type) =>{
+    switch(type){
+      case "all":
+        setExcelEnabled(false);
+        setPdfEnabled(false);
+        setWordEnabled(false);
+        setPptEnabled(false);
+        break;
+      case "pdf":
+        setAllDocsEnabled(false);
+        setExcelEnabled(false);
+        setWordEnabled(false);
+        setPptEnabled(false);
+        break;
+      case "excel":
+        setAllDocsEnabled(false);
+        setPdfEnabled(false);
+        setWordEnabled(false);
+        setPptEnabled(false);
+        break;
+      case "word":
+        setAllDocsEnabled(false);
+        setExcelEnabled(false);
+        setPdfEnabled(false);
+        setPptEnabled(false);
+        break;
+      case "ppt":
+        setAllDocsEnabled(false);
+        setExcelEnabled(false);
+        setWordEnabled(false);
+        setPdfEnabled(false);
+        break;
+    }
+  };
+
+  const CustomButton = ({ onPress, isEnabled, label }) => (
+    <TouchableOpacity onPress={onPress}>
+      <View
+        style={{
+          backgroundColor: isEnabled ? '#5555' : '#FFFFFF',
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          borderRadius: 20,
+          borderWidth: 1,
+          borderColor: '#666666',
+        }}
+      >
+        <Text style={{ color: '#000000' }}>{label}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+
   return (
     <View className="flex-1">
       <StatusBar style="light" />
@@ -99,11 +169,152 @@ const DocumentListScreen = ({ navigation, route }) => {
         </Text>
       </View>
 
+      <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 10, marginHorizontal: 10 }}>
+        <CustomButton
+          onPress={() => {
+            setSelectedType("all");
+            setAllDocsEnabled(true);
+            toggleEnabledButton("all");
+            fetchDocumentList(selectedType);
+          }}
+          isEnabled={isAllDocsEnabled}
+          label="All Docs"
+        />
+        <CustomButton
+          onPress={() => {
+            setSelectedType("application/pdf");
+            setPdfEnabled(true);
+            toggleEnabledButton("pdf");
+            fetchDocumentList(selectedType);
+          }}
+          isEnabled={isPdfEnabled}
+          label="PDF"
+        />
+        <CustomButton
+          onPress={() => {
+            setSelectedType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+            setWordEnabled(true);
+            toggleEnabledButton("word");
+            fetchDocumentList(selectedType);
+          }}
+          isEnabled={isWordEnabled}
+          label="Word"
+        />
+        <CustomButton
+          onPress={() => {
+            setSelectedType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            setExcelEnabled(true);
+            toggleEnabledButton("excel");
+            fetchDocumentList(selectedType);
+          }}
+          isEnabled={isExcelEnabled}
+          label="Excel"
+        />
+        <CustomButton
+          onPress={() => {
+            setSelectedType("application/vnd.openxmlformats-officedocument.presentationml.presentation");
+            setPptEnabled(true);
+            toggleEnabledButton("ppt");
+            fetchDocumentList(selectedType);
+          }}
+          isEnabled={isPptEnabled}
+          label="PPT"
+        />
+      </View>
+
+      {/* <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 10, marginHorizontal: 10 }}>
+
+        <TouchableOpacity onPress={() => {
+          setSelectedType("all");
+          setAllDocsEnabled(true);
+          toggleEnabledButton("all");
+          fetchDocumentList(selectedType); 
+          }}>
+          <View style={{
+            backgroundColor: isAllDocsEnabled ? '#5555' : '#FFFFFF', 
+            paddingVertical: 10, 
+            paddingHorizontal: 20,
+            borderRadius: 20,
+            borderWidth: 1,
+            borderColor: '#666666' 
+          }}>
+            <Text style={{ color: '#000000' }}>All Docs</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {
+          setSelectedType("application/pdf");
+          setPdfEnabled(true);
+          toggleEnabledButton("pdf");
+          fetchDocumentList(selectedType);
+          }}>
+          <View style={{
+            backgroundColor: isPdfEnabled ? '#5555' : '#FFFFFF', 
+            paddingVertical: 10,
+            paddingHorizontal: 20,
+            borderRadius: 20,
+            borderWidth: 1,
+            borderColor: '#666666'
+          }}>
+            <Text style={{ color: '#000000' }}>PDF</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {
+          setSelectedType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+          setWordEnabled(true);
+          toggleEnabledButton("word");
+          fetchDocumentList(selectedType);
+        }}>
+          <View style={{
+            backgroundColor: isWordEnabled ? '#5555' : '#FFFFFF',
+            paddingVertical: 10,
+            paddingHorizontal: 20,
+            borderRadius: 20,
+            borderWidth: 1,
+            borderColor: '#666666'
+          }}>
+            <Text style={{ color: '#000000' }}>Word</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {
+          setSelectedType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+          setExcelEnabled(true);
+          toggleEnabledButton("excel");
+          fetchDocumentList(selectedType);
+        }}>
+          <View style={{
+            backgroundColor: isExcelEnabled ? '#5555' : '#FFFFFF',
+            paddingVertical: 10,
+            paddingHorizontal: 20,
+            borderRadius: 20,
+            borderWidth: 1,
+            borderColor: '#666666' 
+          }}>
+            <Text style={{ color: '#000000' }}>Excel</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {
+          setSelectedType("application/vnd.openxmlformats-officedocument.presentationml.presentation");
+          setPptEnabled(true);
+          toggleEnabledButton("ppt");
+          fetchDocumentList(selectedType);
+        }}>
+          <View style={{
+            backgroundColor: isPptEnabled ? '#5555' : '#FFFFFF',
+            paddingVertical: 10,
+            paddingHorizontal: 20,
+            borderRadius: 20,
+            borderWidth: 1,
+            borderColor: '#666666'
+          }}>
+            <Text style={{ color: '#000000' }}>PPT</Text>
+          </View>
+        </TouchableOpacity>
+      </View> */}
       {isSearchOpen && <SearchDocument onSearch={handleSearch} />}
       {!isListEmpty && (
         <View className="flex-1 justify-center items-center p-5 mt-5 ">
           <Text className="text-2xl font-bold text-sky-950">
-            Oops! No Documents Found.
+            No Documents Found.
           </Text>
         </View>
       )}
@@ -147,6 +358,7 @@ const DocumentListScreen = ({ navigation, route }) => {
       <HomeIcons
         handleToggleSearch={handleToggleSearch}
         navigation={navigation}
+        category={category}
       />
     </View>
   );

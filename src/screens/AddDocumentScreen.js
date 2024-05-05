@@ -13,7 +13,8 @@ import {
 } from "react-native";
 import { uploadDocument } from "../utils/api";
 
-const AddDocumentScreen = ({ navigation }) => {
+const AddDocumentScreen = ({ navigation, route }) => {
+  const { category } = route.params;
   const [document, setDocument] = useState(null);
   const [documentName, setDocumentName] = useState("");
   const [isUploadEnabled, setIsUploadEnabled] = useState(false);
@@ -49,14 +50,16 @@ const AddDocumentScreen = ({ navigation }) => {
       return;
     }
     console.log("doc: ", document);
+    console.log("category: ", category);
 
     try {
-      console.log("called");
+      console.log("AddDocument called from: ", category);
       console.log(documentUri);
       const response = await uploadDocument(
         documentName,
         documentType,
-        documentUri
+        documentUri,
+        category,
       ); // Replace `1` with the actual userId
       console.log("Document uploaded successfully:", response);
       // Reset document state after successful upload
@@ -65,7 +68,9 @@ const AddDocumentScreen = ({ navigation }) => {
       setDocumentType("");
       // Reset upload button state
       setIsUploadEnabled(false);
-      navigation.navigate("Home");
+      navigation.navigate("DocumentList", {category: category});
+      // navigation.navigate("Home");
+      
     } catch (error) {
       console.error("Error uploading document:", error);
       // Handle upload error, e.g., show an error message

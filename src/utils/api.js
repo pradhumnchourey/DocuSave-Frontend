@@ -33,7 +33,7 @@ const signUp = async (user) => {
   }
 };
 
-const uploadDocument = async (docName, docType, docUri) => {
+const uploadDocument = async (docName, docType, docUri, category) => {
   const userId = await fetchUserId();
   console.log("in uploadDocument");
   const data = {
@@ -41,6 +41,7 @@ const uploadDocument = async (docName, docType, docUri) => {
     docType: docType,
     docUri: docUri,
     userId: userId,
+    category: category,
   };
   try {
     const response = await axios.post(`${BASE_URL}/upload`, data);
@@ -52,11 +53,16 @@ const uploadDocument = async (docName, docType, docUri) => {
   }
 };
 
-const getDocumentList = async () => {
-  const userId = await fetchUserId();
-  const response = await axios.get(`${BASE_URL}/documents/${userId}`);
-  // console.log(response.data[0]);
-  return response.data;
+const getDocumentList = async (category, type) => {
+  try{
+    const userId = await fetchUserId();
+    const response = await axios.get(`${BASE_URL}/documents/${userId}?category=${category}&type=${type}`);
+    // console.log(response.data[0]);
+    return response.data;
+  }
+  catch(error){
+    throw error;
+  }
   // Just for fun
   // return [
   //   { docId: 1, docName: "Document 1", docType: "PDF" },
@@ -94,3 +100,4 @@ const deleteDocument = async (docId) => {
 };
 
 export { deleteDocument, getDocumentList, login, signUp, uploadDocument };
+
