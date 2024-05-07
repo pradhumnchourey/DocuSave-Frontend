@@ -22,6 +22,18 @@ const login = async (email, password) => {
   }
 };
 
+// const getCategories = async() => {
+//   try{
+//     const response = await axios.get(`{BASE_URL}/home`)
+//     const categories = response.data;
+//     await AsyncStorage.setItem("categories", JSON.stringify(categories));
+//     return true;
+//   }
+//   catch(error){
+//     throw error;
+//   }
+// };
+
 const signUp = async (user) => {
   try {
     const response = await axios.post(`${BASE_URL}/SignUpForm`, user);
@@ -33,15 +45,15 @@ const signUp = async (user) => {
   }
 };
 
-const uploadDocument = async (docName, docType, docUri, category) => {
+const uploadDocument = async (docName, docType, docUri, categoryId) => {
   const userId = await fetchUserId();
-  console.log("in uploadDocument");
+  console.log("in uploadDocument:", categoryId);
   const data = {
     docName: docName,
     docType: docType,
     docUri: docUri,
     userId: userId,
-    category: category,
+    categoryId: categoryId,
   };
   try {
     const response = await axios.post(`${BASE_URL}/upload`, data);
@@ -53,10 +65,10 @@ const uploadDocument = async (docName, docType, docUri, category) => {
   }
 };
 
-const getDocumentList = async (category, type) => {
+const getDocumentList = async (categoryId, type) => {
   try{
     const userId = await fetchUserId();
-    const response = await axios.get(`${BASE_URL}/documents/${userId}?category=${category}&type=${type}`);
+    const response = await axios.get(`${BASE_URL}/documents/${userId}?categoryId=${categoryId}&type=${type}`);
     // console.log(response.data[0]);
     return response.data;
   }
@@ -100,4 +112,3 @@ const deleteDocument = async (docId) => {
 };
 
 export { deleteDocument, getDocumentList, login, signUp, uploadDocument };
-

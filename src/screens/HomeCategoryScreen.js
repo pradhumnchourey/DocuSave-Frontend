@@ -1,35 +1,18 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import Navbar from "../components/Navbar";
 
-const items = [
-  {
-    id: 1,
-    type: "Identity Docs",
-    image: require("../../assets/Images/1.png"),
-  },
-  {
-    id: 2,
-    type: "Finance Docs",
-    image: require("../../assets/Images/2.png"),
-  },
-  {
-    id: 3,
-    type: "Education Docs",
-    image: require("../../assets/Images/3.png"),
-  },
-  {
-    id: 4,
-    type: "Legal Docs",
-    image: require("../../assets/Images/4.png"),
-  },
-];
+const BASE_URL = "http://192.168.29.43:8080"; // backend URL
+
 const HomeCategoryScreen = ({ navigation }) => {
   const [userName, setUserName] = useState("");
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     fetchUserName();
+    fetchCategories();
   }, []);
 
   const fetchUserName = async () => {
@@ -44,6 +27,42 @@ const HomeCategoryScreen = ({ navigation }) => {
       console.log("Error fetching data:", error);
     }
   };
+
+  const fetchCategories = async() =>{
+    try{
+      const response = await axios.get(`${BASE_URL}/home`);
+      if(response.status===200){
+        const categoriesData = response.data.map((category) => ({
+          ...category,
+          imageUrl: getCategoryImageUrl(category.categoryId), // Add imageUrl property
+        }));
+        setCategories(categoriesData);
+        await AsyncStorage.setItem("categories", JSON.stringify(categoriesData)); // Store categories in AsyncStorage
+        // console.log("Categories:", categoriesData);
+      }
+      else{
+        console.log("Failed to fetch categories");
+      }
+    }
+    catch(error){
+      console.error("Error fetching categories:", error);
+    }
+  }
+  const getCategoryImageUrl = (categoryId) => {
+    switch (categoryId) {
+      case 1:
+        return require("../../assets/Images/1.png");
+      case 2:
+        return require("../../assets/Images/2.png");
+      case 3:
+        return require("../../assets/Images/3.png");
+      case 4:
+        return require("../../assets/Images/4.png");
+      default:
+        return require("../../assets/Images/default.png");
+    }
+  };
+
   return (
     <View className="flex-1 ">
       <Navbar navigation={navigation} />
@@ -65,21 +84,23 @@ const HomeCategoryScreen = ({ navigation }) => {
           {/* <View> */}
           <FlatList
             horizontal={true}
-            data={items}
+            data={categories}
             showsVerticalScrollIndicator={false}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.categoryId}
             className="mx-2"
             renderItem={({ item }) => {
               return (
                 <TouchableOpacity
                   className="bg-blue-100 p-3 rounded-2xl mb-3 mx-2 "
                   onPress={() => {
-                    navigation.navigate("DocumentList", {category: item.type});
+                    navigation.navigate("DocumentList", {
+                      categoryId: item.categoryId, 
+                      categoryName: item.categoryName});
                   }}
                 >
                   <View>
-                    <Image source={item.image} className="w-36 h-36" />
-                    <Text className="font-bold ">{item.type}</Text>
+                    <Image source={item.imageUrl} className="w-36 h-36" />
+                    <Text className="font-bold ">{item.categoryName}</Text>
                   </View>
                 </TouchableOpacity>
               );

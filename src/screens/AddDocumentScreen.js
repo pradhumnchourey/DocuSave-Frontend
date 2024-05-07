@@ -14,7 +14,7 @@ import {
 import { uploadDocument } from "../utils/api";
 
 const AddDocumentScreen = ({ navigation, route }) => {
-  const { category } = route.params;
+  const { categoryId, categoryName } = route.params;
   const [document, setDocument] = useState(null);
   const [documentName, setDocumentName] = useState("");
   const [isUploadEnabled, setIsUploadEnabled] = useState(false);
@@ -50,16 +50,16 @@ const AddDocumentScreen = ({ navigation, route }) => {
       return;
     }
     console.log("doc: ", document);
-    console.log("category: ", category);
+    console.log("categoryId: ", categoryId);
 
     try {
-      console.log("AddDocument called from: ", category);
+      console.log("AddDocument called from: ", categoryId);
       console.log(documentUri);
       const response = await uploadDocument(
         documentName,
         documentType,
         documentUri,
-        category,
+        categoryId,
       ); // Replace `1` with the actual userId
       console.log("Document uploaded successfully:", response);
       // Reset document state after successful upload
@@ -68,7 +68,10 @@ const AddDocumentScreen = ({ navigation, route }) => {
       setDocumentType("");
       // Reset upload button state
       setIsUploadEnabled(false);
-      navigation.navigate("DocumentList", {category: category});
+      navigation.navigate("DocumentList", {
+        categoryId: categoryId,
+        categoryName: categoryName
+      });
       // navigation.navigate("Home");
       
     } catch (error) {
